@@ -1,0 +1,23 @@
+huoxin-auto-collapse-long-images:
+  # For more details on the format
+  # Checkout https://docs.flarum.org/extend/i18n/#appendix-a-standard-key-format
+  admin:
+    max-height:
+      label: Maximum image height (in pixels) for automatic collapse
+      help: Images taller than this will be collapsed by default. Default value is 0, means all images are collapsed.
+    use-flarumite-simple-spoilers:
+      label: Use Flarumite Simple Spoilers
+      help: Whether to use the Flarumite Simple Spoilers extension instead of regular spoilers. This requires Flarumite Simple Spoilers to be installed and enabled.
+      custom-text-closed:
+        label: Custom text on Flarumite Simple Spoilers when closed
+        help: Text to display on Flarumite Simple Spoilers when the spoiler is closed. Default text is 'Click to reveal'.
+        placeholder: Click to reveal
+      custom-text-open:
+        label: Custom text on Flarumite Simple Spoilers when open
+        help: Text to display on Flarumite Simple Spoilers when the spoiler is open. Default text is 'Click to hide'.
+        placeholder: Click to hide
+
+  forum:
+    default-text:
+      closed: Click to reveal
+      open: Click to hide

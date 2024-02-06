@@ -1,0 +1,38 @@
+name: Build assets and Sync to GitLab
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build JavaScript assets
+    steps:
+      - uses: actions/checkout@v2
+      - uses: flarum/action-build@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+  sleep:
+    needs: build
+    name: Sleep for 10 seconds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run sleep command
+        run: sleep 10s
+
+  sync:
+    needs: [build, sleep]
+    runs-on: ubuntu-latest
+    name: Git Repo Sync
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: wangchucheng/git-repo-sync@master
+        with:
+          target-url: 'https://gitlab.com/huoxin/fancybox.git'
+          target-username: 'huoxin'
+          target-token: ${{ secrets.GITLAB_ACCESS_TOKEN }}

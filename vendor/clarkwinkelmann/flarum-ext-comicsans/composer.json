@@ -1,0 +1,41 @@
+{
+    "name": "clarkwinkelmann/flarum-ext-comicsans",
+    "description": "Turn text into Comic Sans for no reason",
+    "keywords": [
+        "extension",
+        "flarum",
+        "comicsans"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Clark Winkelmann",
+            "email": "clark.winkelmann@gmail.com",
+            "homepage": "https://clarkwinkelmann.com/"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/clarkwinkelmann/flarum-ext-comicsans/issues",
+        "source": "https://github.com/clarkwinkelmann/flarum-ext-comicsans",
+        "forum": "https://discuss.flarum.org/d/5293"
+    },
+    "require": {
+        "flarum/core": "^1.0",
+        "flarum/bbcode": "^1.0"
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Comic Sans",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-font",
+                "backgroundColor": "#000",
+                "color": "#87d37c"
+            }
+        },
+        "flagrow": {
+            "discuss": "https://discuss.flarum.org/d/5293"
+        }
+    }
+}

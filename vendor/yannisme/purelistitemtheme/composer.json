@@ -1,0 +1,41 @@
+{
+    "name": "yannisme/purelistitemtheme",
+    "description": "To simplify the flarum discussion list item, only for exhibiting more information",
+    "keywords": [
+        "flarum"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+	"homepage": "https://yannisme.com",
+	"support": {
+     "issues": "https://github.com/yannisme/flarum-PureListItem-theme/issues",
+     "source": "https://github.com/yannisme/flarum-PureListItem-theme",
+     "forum": "https://discuss.flarum.org.cn/d/3833"
+  },
+    "require": {
+        "flarum/core": "*"
+    },
+    "authors": [
+        {
+            "name": "yannis",
+            "email": "rd@yannis.cn",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Yannisme\\PureListItemTheme\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Pure ListItem",
+            "category": "theme",
+            "icon": {
+                "name": "fab fa-yandex-international",
+                "color": "#FFF",
+                "backgroundColor": "#39760f"
+            }
+        }
+    }
+}

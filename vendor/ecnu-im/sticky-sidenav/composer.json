@@ -1,0 +1,52 @@
+{
+    "name": "ecnu-im/sticky-sidenav",
+    "description": "Make the sidenav section sticky and scrollable. Also support hot-discussions widget.",
+    "keywords": [
+        "flarum",
+        "sticky",
+        "sidenav"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": {
+        "flarum/core": "^1.2.0"
+    },
+    "authors": [
+        {
+            "name": "merc",
+            "email": "signormercurio@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "extra": {
+        "flarum-extension": {
+            "title": "Sticky Sidenav",
+            "category": "theme",
+            "icon": {
+                "name": "fas fa-map-pin",
+                "color": "#fff",
+                "backgroundColor": "#f28326"
+            }
+        },
+        "flarum-cli": {
+            "modules": {
+                "admin": false,
+                "forum": true,
+                "js": false,
+                "jsCommon": false,
+                "css": true,
+                "locale": false,
+                "gitConf": true,
+                "githubActions": false,
+                "prettier": false,
+                "typescript": false,
+                "bundlewatch": false,
+                "backendTesting": false,
+                "editorConfig": false,
+                "styleci": false
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

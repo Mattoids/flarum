@@ -1,0 +1,114 @@
+[
+    {
+        "name": "邮箱查邀请码",
+        "note": "使用接收邀请码的邮件查询邀请与使用情况",
+        "sql": "SELECT\n    `flarum_users`.`username` AS `send_username`,\n    `flarum_doorkeys`.`id` AS `doorkey_id`,\n    `flarum_buy_doorman_records`.`doorman_key`,\n    `flarum_buy_doorman_records`.`recipient`,\n    `flarum_buy_doorman_records`.`created_at` AS `doorman_created_at`,\n    `flarum_buy_doorman_records`.`retry` AS `doorman_retry`,\n    `flarum_buy_doorman_records`.`error` AS `doorman_error`,\n    `flarum_users_recipient`.`username` AS `new_username`,\n    `flarum_users_recipient`.`joined_at` AS `new_user_joined_at`\nFROM\n    `flarum_buy_doorman_records`\n    LEFT JOIN `flarum_doorkeys` ON `flarum_doorkeys`.`key` = `flarum_buy_doorman_records`.`doorman_key`\n    LEFT JOIN `flarum_users` ON `flarum_users`.`id` = `flarum_buy_doorman_records`.`create_user_id`\n    LEFT JOIN `flarum_users` AS `flarum_users_recipient` ON `flarum_users_recipient`.`invite_code` = `flarum_buy_doorman_records`.`doorman_key`\nWHERE\n    `recipient` = :recipient;",
+        "params": [
+            {
+                "key": "recipient",
+                "type": "string",
+                "note": "邀请码接受邮箱"
+            }
+        ]
+    },
+    {
+        "name": "十月邀请活动统计",
+        "note": "十月邀请活动用户发送邀请与实际注册用户数统计",
+        "sql": "SELECT\n   `flarum_users_create`.`username` AS `send_username`,\n    COUNT(`flarum_users_create`.`username`) AS `send_total`,\n    COUNT(CASE WHEN `flarum_users_recipient`.`username` IS NOT NULL THEN 1 ELSE NULL END) AS `reg_total`\n    -- `flarum_buy_doorman_records`.`doorman_key`,\n    -- `flarum_buy_doorman_records`.`recipient`,\n    -- `flarum_buy_doorman_records`.`created_at` AS `doorman_created_at`,\n    -- `flarum_users_recipient`.`username` AS `new_username`,\n    -- `flarum_users_recipient`.`email` AS `new_email`,\n    -- `flarum_users_recipient`.`joined_at` AS `new_user_joined_at`\nFROM\n    `flarum_buy_doorman_records`\n    LEFT JOIN `flarum_users` AS `flarum_users_create` ON `flarum_users_create`.`id` = `flarum_buy_doorman_records`.`create_user_id`\n    LEFT JOIN `flarum_users` AS `flarum_users_recipient` ON `flarum_users_recipient`.`invite_code` = `flarum_buy_doorman_records`.`doorman_key`\nWHERE\n    `created_at` >= '2023-09-28 16:00'\n    AND `created_at` < '2023-10-03 16:00'\n    -- AND `flarum_users`.`username` IS NOT NULL\n    GROUP BY `flarum_users_create`.`username`\n    ORDER BY `reg_total` DESC\n    ;",
+        "params": []
+    },
+    {
+        "name": "重新发送邀请码",
+        "note": "重置邀请码发送次数，以重新发送邀请码到用户邮箱",
+        "sql": "UPDATE `flarum_buy_doorman_records` SET `retry` = '3' WHERE `recipient` = :recipient;",
+        "params": [
+            {
+                "key": "recipient",
+                "type": "string",
+                "note": "收件邮箱地址"
+            }
+        ]
+    },
+    {
+        "name": "徽章-查询连续签到天数",
+        "note": "天天摸鱼徽章使用",
+        "sql": "SELECT id,username,nickname,total_continuous_checkin_count,total_checkin_count from flarum_users where username = :username;",
+        "params": [
+            {
+                "key": "username",
+                "type": "string",
+                "note": "用户名（论坛个人主页地址栏最后面）"
+            }
+        ]
+    },
+    {
+        "name": "等级-查询用户等级",
+        "note": "查询用户回复数和注册时间",
+        "sql": "select username,nickname,joined_at,ccount from \n(select a.user_id,count(*)as ccount from flarum_posts a \nleft join flarum_discussions b on a.discussion_id=b.id \nwhere a.is_private=0 and b.is_private=0 and a.type='comment'\ngroup by a.user_id) a,\n(select id,username,nickname,joined_at from flarum_users \n) b\nwhere a.user_id=b.id and b.username= :username",
+        "params": [
+            {
+                "key": "username",
+                "type": "string",
+                "note": "用户名（个人主页地址栏最后面）"
+            }
+        ]
+    },
+    {
+        "name": "PT 用户组认证升级",
+        "note": "将指定的用户从未PT认证升级为PT认证用户组",
+        "sql": "UPDATE\n    `flarum_group_user`\n    LEFT JOIN `flarum_users` ON `flarum_group_user`.`user_id` = `flarum_users`.`id`\nSET\n    `flarum_group_user`.`group_id` = 18\nWHERE\n    `flarum_users`.`username` = :username\n    AND `flarum_users`.`email` = :email\n    AND `flarum_group_user`.`group_id` = 17;",
+        "params": [
+            {
+                "key": "username",
+                "type": "string",
+                "note": "用户名，在个人主页链接中，不是看到的昵称"
+            },
+            {
+                "key": "email",
+                "type": "string",
+                "note": "PT站看到的邮箱地址"
+            }
+        ]
+    },
+    {
+        "name": "水王榜实际发帖数",
+        "note": "查询水王榜非私聊的回复数量",
+        "sql": "SELECT `user_id`,`flarum_users`.`username`,`nickname`, COUNT(`flarum_posts`.`id`) AS `total`\nFROM `flarum_posts`\nLEFT JOIN `flarum_users` ON `flarum_users`.`id` = `user_id`\nWHERE `is_private` = '0' AND `created_at` >= :start_date AND `created_at` < :end_date AND `type` = 'comment'\nGROUP BY `user_id`\nORDER BY `total` DESC\nLIMIT 10",
+        "params": [
+            {
+                "key": "start_date",
+                "type": "string",
+                "note": "开始日期 如 2023-10-01"
+            },
+            {
+                "key": "end_date",
+                "type": "string",
+                "note": "结束日期 如 2023-11-01"
+            }
+        ]
+    },
+    {
+        "name": "查询上家邀请人信息",
+        "note": "查询指定用户邀请人（上家）相关信息",
+        "sql": "SELECT\n    `flarum_users`.`username` AS `username`,\n    `flarum_users`.`email` AS `email`,\n    `flarum_users`.`joined_at` AS `joined_at`,\n    `flarum_users`.`invite_code` AS `invite_code`,\n    `flarum_buy_doorman_records`.`recipient` AS `doorman_recipient`,\n    `flarum_buy_doorman_records`.`created_at` AS `doorman_created_at`,\n    `invite_users`.`username` AS `doorman_username`,\n    `invite_users`.`joined_at` AS `doorman_joined_at`\nFROM\n    `flarum_users`\n    LEFT JOIN `flarum_buy_doorman_records` ON `flarum_buy_doorman_records`.`doorman_key` = `flarum_users`.`invite_code`\n    LEFT JOIN `flarum_users` AS `invite_users` ON `invite_users`.`id` = `flarum_buy_doorman_records`.`create_user_id`\nWHERE\n    `flarum_users`.`username` = :username",
+        "params": [
+            {
+                "key": "username",
+                "type": "string",
+                "note": "被查询的用户"
+            }
+        ]
+    },
+    {
+        "name": "太水了折叠记录",
+        "note": "查询太水了被折叠的记录列表",
+        "sql": "SELECT `discussion_id`, `post_id`, `username`, left(regexp_replace(`content`, '<[^>]+>', ''), 50), COUNT(`post_id`) AS `total`\nFROM `flarum_post_spams`\nLEFT JOIN `flarum_posts` ON `flarum_posts`.`id` = `post_id`\nLEFT JOIN `flarum_users` ON `flarum_users`.`id` = `flarum_posts`.`user_id`\nGROUP BY `post_id`\nHAVING `total` >= 5\nORDER BY `total` DESC",
+        "params": []
+    },
+    {
+        "name": "查询警告三次且未封禁的用户",
+        "note": "查询最近警告三次但没有处于封禁状态的账号",
+        "sql": "SELECT `user_id`, `flarum_users`.`username`, SUM(`strikes`) AS `total_strikes`\nFROM `flarum_warnings`\nLEFT JOIN `flarum_users` ON `flarum_users`.`id` = `user_id`\nWHERE `suspended_until` IS NULL\nGROUP BY `user_id`\nHAVING SUM(`strikes`) >= 3",
+        "params": []
+    }
+]
