@@ -1,0 +1,6 @@
+storage/
+public/assets/files/
+public/assets/avatars/
+public/assets/covers/
+config.php
+.idea
